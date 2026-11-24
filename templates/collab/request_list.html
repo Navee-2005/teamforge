@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+{% block title %}{% if mode == 'incoming' %}Incoming requests{% else %}My applications{% endif %}{% endblock %}
+{% block content %}
+<h2 class="mb-3">{% if mode == 'incoming' %}Requests to join my ideas{% else %}My applications{% endif %}</h2>
+
+<ul class="nav nav-pills mb-3">
+  <li class="nav-item"><a class="nav-link {% if not selected_status %}active{% endif %}" href="?">All</a></li>
+  {% for value, label in status_choices %}
+  <li class="nav-item"><a class="nav-link {% if selected_status == value %}active{% endif %}" href="?status={{ value }}">{{ label }}</a></li>
+  {% endfor %}
+</ul>
+
+<div class="table-responsive">
+<table class="table table-hover align-middle bg-white shadow-sm">
+  <thead class="table-light">
+    <tr>
+      <th>{% if mode == 'incoming' %}Applicant{% else %}Project{% endif %}</th>
+      <th>Message</th><th>Status</th><th>Date</th><th></th>
+    </tr>
+  </thead>
+  <tbody>
+  {% for r in join_requests %}
+    <tr>
+      <td>
+        {% if mode == 'incoming' %}
+          <a href="{% url 'accounts:profile_detail' r.applicant.profile.pk %}">{{ r.applicant.username }}</a>
+          <div class="small text-muted">for <a href="{{ r.idea.get_absolute_url }}">{{ r.idea.title }}</a></div>
+          <div class="small">{% for s in r.applicant.profile.have_list %}<span class="badge bg-success me-1">{{ s }}</span>{% endfor %}</div>
+        {% else %}
+          <a href="{{ r.idea.get_absolute_url }}">{{ r.idea.title }}</a>
+          <div class="small text-muted">by {{ r.idea.owner.username }}</div>
+        {% endif %}
+      </td>
+      <td class="small">{{ r.message|truncatewords:20 }}</td>
+      <td><span class="badge bg-{{ r.badge_class }}">{{ r.get_status_display }}</span></td>
+      <td class="small text-muted">{{ r.created_at|date:"d M Y" }}</td>
+      <td class="text-end">
+        {% if mode == 'incoming' and r.status == 'pending' %}
+          <form method="post" action="{% url 'collab:accept' r.pk %}" class="d-inline">{% csrf_token %}<button class="btn btn-sm btn-success">Accept</button></form>
+          <form method="post" action="{% url 'collab:reject' r.pk %}" class="d-inline">{% csrf_token %}<button class="btn btn-sm btn-outline-danger">Reject</button></form>
+        {% elif mode == 'outgoing' and r.status == 'pending' or mode == 'outgoing' and r.status == 'accepted' %}
+          <form method="post" action="{% url 'collab:cancel' r.pk %}" class="d-inline">{% csrf_token %}<button class="btn btn-sm btn-outline-secondary">{% if r.status == 'accepted' %}Leave team{% else %}Cancel{% endif %}</button></form>
+        {% endif %}
+      </td>
+    </tr>
+  {% empty %}
+    <tr><td colspan="5" class="text-center text-muted py-4">No requests to show.</td></tr>
+  {% endfor %}
+  </tbody>
+</table>
+</div>
+{% include "partials/_pagination.html" %}
+{% endblock %}

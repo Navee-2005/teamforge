@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block title %}Edit profile{% endblock %}
+{% block content %}
+<div class="row justify-content-center"><div class="col-lg-7">
+  <div class="card shadow-sm"><div class="card-body p-4">
+    <h3 class="mb-3">Edit profile</h3>
+    <form method="post" enctype="multipart/form-data" novalidate>
+      {% csrf_token %}
+      {% include "partials/_form_fields.html" %}
+      <button class="btn btn-primary" type="submit">Save profile</button>
+      <a class="btn btn-outline-secondary" href="{% url 'accounts:profile_detail' user.profile.pk %}">Cancel</a>
+    </form>
+  </div></div>
+</div></div>
+{% endblock %}

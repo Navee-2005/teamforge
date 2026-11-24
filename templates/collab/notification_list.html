@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block title %}Notifications{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <h2 class="mb-0">Notifications</h2>
+  {% if unread_count %}
+  <form method="post" action="{% url 'collab:read_all' %}">{% csrf_token %}<button class="btn btn-outline-primary btn-sm">Mark all as read</button></form>
+  {% endif %}
+</div>
+<div class="list-group shadow-sm">
+  {% for n in notifications %}
+  <div class="list-group-item d-flex justify-content-between align-items-center {% if not n.is_read %}list-group-item-primary{% endif %}">
+    <div>
+      {{ n.message }}
+      <div class="small text-muted">{{ n.created_at|timesince }} ago</div>
+    </div>
+    {% if not n.is_read %}
+    <form method="post" action="{% url 'collab:read' n.pk %}">{% csrf_token %}<button class="btn btn-sm btn-primary">{% if n.link %}View{% else %}Mark read{% endif %}</button></form>
+    {% elif n.link %}
+    <a href="{{ n.link }}" class="btn btn-sm btn-outline-secondary">View</a>
+    {% endif %}
+  </div>
+  {% empty %}
+  <div class="list-group-item text-muted">No notifications yet.</div>
+  {% endfor %}
+</div>
+{% include "partials/_pagination.html" %}
+{% endblock %}

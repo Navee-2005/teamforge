@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block title %}{% if object %}Edit idea{% else %}Post idea{% endif %}{% endblock %}
+{% block content %}
+<div class="row justify-content-center"><div class="col-lg-8">
+  <div class="card shadow-sm"><div class="card-body p-4">
+    <h3 class="mb-3">{% if object %}Edit project idea{% else %}Post a project idea{% endif %}</h3>
+    <form method="post" enctype="multipart/form-data" novalidate>
+      {% csrf_token %}
+      {% include "partials/_form_fields.html" %}
+      <button class="btn btn-primary" type="submit">{% if object %}Save changes{% else %}Publish idea{% endif %}</button>
+      <a class="btn btn-outline-secondary" href="{% if object %}{{ object.get_absolute_url }}{% else %}{% url 'ideas:list' %}{% endif %}">Cancel</a>
+    </form>
+  </div></div>
+</div></div>
+{% endblock %}

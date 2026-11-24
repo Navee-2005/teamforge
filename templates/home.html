@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block title %}Find your hackathon team{% endblock %}
+{% block content %}
+<div class="tf-hero text-center text-white rounded-4 p-5 mb-4">
+  <h1 class="display-5 fw-bold">Find the right teammates for your next hackathon</h1>
+  <p class="lead">Publish your project idea, discover students with the skills you need, and manage collaboration requests in one place.</p>
+  <a href="{% url 'accounts:register' %}" class="btn btn-light btn-lg me-2">Get started</a>
+  <a href="{% url 'accounts:login' %}" class="btn btn-outline-light btn-lg">Login</a>
+</div>
+<div class="row g-4 text-center">
+  <div class="col-md-4"><div class="card h-100 shadow-sm"><div class="card-body">
+    <h5>1. Build your profile</h5><p class="text-muted mb-0">List the skills you have and the ones you want to learn.</p></div></div></div>
+  <div class="col-md-4"><div class="card h-100 shadow-sm"><div class="card-body">
+    <h5>2. Post or browse ideas</h5><p class="text-muted mb-0">Share a project idea or search ideas by skill, category and level.</p></div></div></div>
+  <div class="col-md-4"><div class="card h-100 shadow-sm"><div class="card-body">
+    <h5>3. Team up &amp; track progress</h5><p class="text-muted mb-0">Accept requests, form your team and track milestones together.</p></div></div></div>
+</div>
+{% endblock %}

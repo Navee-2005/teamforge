@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+{% block title %}Dashboard{% endblock %}
+{% block content %}
+<h2 class="mb-4">Welcome back, {{ user.username }}</h2>
+
+<div class="row g-3 mb-4">
+  <div class="col-6 col-lg-3"><div class="card stat shadow-sm"><div class="card-body"><div class="stat-num">{{ total_ideas }}</div><div class="text-muted">Total ideas</div></div></div></div>
+  <div class="col-6 col-lg-3"><div class="card stat shadow-sm"><div class="card-body"><div class="stat-num">{{ my_ideas_count }}</div><div class="text-muted">My ideas</div></div></div></div>
+  <div class="col-6 col-lg-3"><div class="card stat shadow-sm"><div class="card-body"><div class="stat-num">{{ pending_incoming|add:pending_outgoing }}</div><div class="text-muted">Pending requests</div></div></div></div>
+  <div class="col-6 col-lg-3"><div class="card stat shadow-sm"><div class="card-body"><div class="stat-num">{{ accepted_total }}</div><div class="text-muted">Accepted</div></div></div></div>
+</div>
+
+<div class="row g-4">
+  <div class="col-lg-7">
+    <div class="card shadow-sm mb-4"><div class="card-body">
+      <div class="d-flex justify-content-between"><h5>Recent ideas</h5><a href="{% url 'ideas:list' %}">View all</a></div>
+      <ul class="list-group list-group-flush">
+        {% for idea in recent_ideas %}
+        <li class="list-group-item d-flex justify-content-between">
+          <a href="{{ idea.get_absolute_url }}">{{ idea.title }}</a>
+          <span class="text-muted small">{{ idea.owner.username }} &middot; {{ idea.created_at|timesince }} ago</span>
+        </li>
+        {% empty %}<li class="list-group-item text-muted">No ideas yet.</li>{% endfor %}
+      </ul>
+    </div></div>
+
+    <div class="card shadow-sm"><div class="card-body">
+      <h5>Ideas matching your skills</h5>
+      {% for item in matches %}
+      <div class="d-flex justify-content-between border-bottom py-2">
+        <a href="{{ item.idea.get_absolute_url }}">{{ item.idea.title }}</a>
+        <span>{% for s in item.skills %}<span class="badge bg-success me-1">{{ s }}</span>{% endfor %}</span>
+      </div>
+      {% empty %}
+      <p class="text-muted mb-0">Add skills to your <a href="{% url 'accounts:profile_edit' %}">profile</a> to see matching projects.</p>
+      {% endfor %}
+    </div></div>
+  </div>
+
+  <div class="col-lg-5">
+    <div class="card shadow-sm mb-4"><div class="card-body">
+      <div class="d-flex justify-content-between"><h5>Notifications</h5><a href="{% url 'collab:notifications' %}">View all</a></div>
+      <ul class="list-unstyled mb-0">
+        {% for n in recent_notifications %}
+        <li class="py-1 {% if not n.is_read %}fw-semibold{% endif %}">{{ n.message }}</li>
+        {% empty %}<li class="text-muted">Nothing new.</li>{% endfor %}
+      </ul>
+    </div></div>
+
+    <div class="card shadow-sm"><div class="card-body">
+      <h5>Teams I joined</h5>
+      <ul class="list-unstyled mb-0">
+        {% for idea in my_teams %}
+        <li class="mb-2"><a href="{{ idea.get_absolute_url }}">{{ idea.title }}</a>
+          <div class="progress" style="height: 8px;"><div class="progress-bar bg-success" style="width: {{ idea.overall_progress }}%"></div></div>
+        </li>
+        {% empty %}<li class="text-muted">You have not joined a team yet.</li>{% endfor %}
+      </ul>
+    </div></div>
+  </div>
+</div>
+{% endblock %}
